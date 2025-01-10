@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_product_price_histories",
+  "info": {
+    "displayName": "Price history",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "date": {
+      "type": "datetime"
+    },
+    "price": {
+      "type": "decimal"
+    },
+    "vatRate": {
+      "type": "enumeration",
+      "enum": [
+        "standard",
+        "reduced",
+        "zero"
+      ]
+    },
+    "store": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::store.store"
+    }
+  }
+}

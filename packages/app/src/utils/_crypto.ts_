@@ -1,0 +1,187 @@
+// Convert an ArrayBuffer to a hex string
+export function buf2hex(buffer: ArrayBuffer): string {
+  return Array.prototype.map
+    .call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2))
+    .join('');
+}
+
+// Convert hex string to Uint8Array
+export function hex2buf(hex: string): Uint8Array {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < bytes.length; i++) {
+    bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+  }
+  return bytes;
+}
+
+// Derive a master key from a password and salt using PBKDF2.
+export async function deriveMasterKey(password: string, saltBuffer: ArrayBuffer): Promise<CryptoKey> {
+  const encoder = new TextEncoder();
+  const keyMaterial = await window.crypto.subtle.importKey(
+    'raw',
+    encoder.encode(password),
+    'PBKDF2',
+    false,
+    ['deriveKey']
+  );
+
+  return window.crypto.subtle.deriveKey(
+    {
+			name: 'PBKDF2',
+			salt: saltBuffer,
+			iterations: 100000,
+			hash: 'SHA-256'
+    },
+		keyMaterial,
+		{ name: 'AES-GCM', length: 256 },
+		true,
+		['wrapKey', 'unwrapKey']
+  );
+}
+
+// Generate a random salt (16 bytes)
+export function generateSalt() {
+  return window.crypto.getRandomValues(new Uint8Array(16));
+}
+
+// Generate a random user encryption key (AES-GCM)
+export async function generateUserEncryptionKey() {
+  return window.crypto.subtle.generateKey(
+    { name: 'AES-GCM', length: 256 },
+    true,
+    ['encrypt', 'decrypt']
+  );
+}
+
+// Export a CryptoKey as raw bytes.
+export async function exportKey(key: CryptoKey): Promise<ArrayBuffer> {
+  return window.crypto.subtle.exportKey('raw', key);
+}
+
+// Import raw key material as a CryptoKey.
+export async function importKey(rawKey: ArrayBuffer): Promise<CryptoKey> {
+  return window.crypto.subtle.importKey(
+    'raw',
+    rawKey,
+    { name: 'AES-GCM' },
+    true,
+    ['encrypt', 'decrypt']
+  );
+}
+
+// Encrypt the user encryption key with the master key.
+// Returns an object with iv and ciphertext (both as hex strings).
+export async function encryptUserKey(userKeyRaw: ArrayBuffer, masterKey: CryptoKey): Promise<{ iv: string, ciphertext: string }> {
+  // Generate a 12-byte IV for AES-GCM.
+  const iv = window.crypto.getRandomValues(new Uint8Array(12));
+  const ciphertextBuffer = await window.crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv },
+    masterKey,
+    userKeyRaw
+  );
+  return {
+    iv: buf2hex(iv.buffer),
+    ciphertext: buf2hex(ciphertextBuffer),
+  };
+}
+
+// Decrypt the encrypted user key using the master key.
+// Expects an object with iv and ciphertext (hex strings).
+export async function decryptUserKey(encrypted: { iv: string, ciphertext: string }, masterKey: CryptoKey): Promise<ArrayBuffer> {
+  const iv = hex2buf(encrypted.iv);
+  const ciphertext = hex2buf(encrypted.ciphertext);
+  const decryptedBuffer = await window.crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv },
+    masterKey,
+    ciphertext
+  );
+  return decryptedBuffer; // returns raw key bytes; import if needed
+}
+
+// Encrypt arbitrary data (a string) with a given key.
+export async function encryptData(plaintext: string, key: CryptoKey): Promise<{ iv: string, ciphertext: string }> {
+  const iv = window.crypto.getRandomValues(new Uint8Array(12));
+  const encoder = new TextEncoder();
+  const encodedText = encoder.encode(plaintext);
+  const ciphertextBuffer = await window.crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv },
+    key,
+    encodedText
+  );
+  return {
+    iv: buf2hex(iv.buffer),
+    ciphertext: buf2hex(ciphertextBuffer),
+  };
+}
+
+// Decrypt encrypted data (object with iv and ciphertext) with a given key.
+export async function decryptData(encryptedData: { iv: string, ciphertext: string }, key: CryptoKey): Promise<string> {
+	const ivBuffer = toArrayBuffer(hex2buf(encryptedData.iv).buffer); // Ensure a proper ArrayBuffer
+	const ciphertextBuffer = toArrayBuffer(hex2buf(encryptedData.ciphertext).buffer);
+	const tagBuffer = toArrayBuffer(hex2buf(encryptedData.tag).buffer);
+	
+	// Combine ciphertext and tag
+	const combined = new Uint8Array(ciphertextBuffer.byteLength + tagBuffer.byteLength);
+	combined.set(new Uint8Array(ciphertextBuffer), 0);
+	combined.set(new Uint8Array(tagBuffer), ciphertextBuffer.byteLength);
+	
+	// Now decrypt. Note: tagLength is optional if you use the default (128 bits)
+	const decryptedBuffer = await window.crypto.subtle.decrypt(
+		{ name: 'AES-GCM', iv: ivBuffer, tagLength: 128 },
+		key,
+		combined.buffer
+	);
+	
+	const decoder = new TextDecoder();
+	const plaintext = decoder.decode(decryptedBuffer);
+	return plaintext;
+}
+
+
+// Derive a wrapping key from a 4-digit PIN using PBKDF2
+export async function deriveWrappingKey(pin, saltBuffer) {
+  const encoder = new TextEncoder();
+  const keyMaterial = await window.crypto.subtle.importKey(
+    'raw',
+    encoder.encode(pin),
+    'PBKDF2',
+    false,
+    ['deriveKey']
+  );
+  return window.crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt: saltBuffer, iterations: 100000, hash: 'SHA-256' },
+    keyMaterial,
+    { name: 'AES-GCM', length: 256 },
+    true,
+    ['wrapKey', 'unwrapKey']
+  );
+}
+
+// Wrap (encrypt) the DEK with the wrapping key
+export async function wrapDEK(dek: CryptoKey, wrappingKey: CryptoKey): Promise<{ iv: string, wrappedKey: string }> {
+  const iv = window.crypto.getRandomValues(new Uint8Array(12));
+  const wrappedKeyBuffer = await window.crypto.subtle.wrapKey(
+    'raw',
+    dek,
+    wrappingKey,
+    { name: 'AES-GCM', iv }
+  );
+  return { iv: buf2hex(iv.buffer), wrappedKey: buf2hex(wrappedKeyBuffer) };
+}
+
+// Unwrap (decrypt) the DEK using the wrapping key
+export async function unwrapDEK(pin: string, wrappedDEKObj: { iv: string, wrappedKey: string }, saltBuffer: ArrayBuffer): Promise<CryptoKey> {
+  const wrappingKey = await deriveWrappingKey(pin, saltBuffer);
+  const iv = hex2buf(wrappedDEKObj.iv);
+  const wrappedKeyBuffer = hex2buf(wrappedDEKObj.wrappedKey);
+  const dek = await window.crypto.subtle.unwrapKey(
+    'raw',
+    wrappedKeyBuffer,
+    wrappingKey,
+    { name: 'AES-GCM', iv },
+    { name: 'AES-GCM', length: 256 },
+    true,
+    ['encrypt', 'decrypt']
+  );
+  return dek;
+}

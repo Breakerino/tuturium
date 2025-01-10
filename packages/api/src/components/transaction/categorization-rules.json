@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_transaction_category_rules",
+  "info": {
+    "displayName": "Categorization Rules",
+    "icon": "apps",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+		"relation": {
+      "type": "enumeration",
+      "enum": [
+        "OR",
+        "AND"
+      ]
+    },
+    "category": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::transaction.transaction-category"
+    },
+    "conditions": {
+      "displayName": "Transaction Condition",
+      "type": "component",
+      "repeatable": true,
+      "component": "global.condition"
+    }
+  }
+}

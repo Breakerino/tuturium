@@ -1,0 +1,77 @@
+{
+  "kind": "collectionType",
+  "collectionName": "receipts",
+  "info": {
+    "singularName": "receipt",
+    "pluralName": "receipts",
+    "displayName": "Receipts",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "createdAt": {
+      "type": "datetime"
+    },
+    "uid": {
+      "type": "uid",
+      "required": false
+    },
+    "okp": {
+      "type": "uid",
+      "required": false
+    },
+    "issuedAt": {
+      "type": "datetime"
+    },
+    "receiptNumber": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "total": {
+      "type": "decimal"
+    },
+    "exemption": {
+      "type": "boolean",
+      "default": false
+    },
+    "items": {
+      "displayName": "Item",
+      "type": "component",
+      "repeatable": true,
+      "component": "receipt.item"
+    },
+    "taxes": {
+      "displayName": "Taxes",
+      "type": "component",
+      "repeatable": true,
+      "component": "receipt.taxes"
+    },
+    "store": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::store.store"
+    },
+    "currency": {
+      "type": "enumeration",
+      "enum": [
+        "EUR"
+      ]
+    },
+    "transaction": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::transaction.transaction",
+      "mappedBy": "receipt"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "receipts"
+    }
+  }
+}

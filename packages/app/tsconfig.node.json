@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@/vite/*": [".vite/*"],
+		},
+    "composite": true,
+		"tsBuildInfoFile": "./.vite/cache/tsconfig.app.tsbuildinfo",
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+		"noEmit": true
+  },
+  "include": ["vite.config.ts", ".vite/**/*"]
+}

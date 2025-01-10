@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_transaction_bank_accounts",
+  "info": {
+    "displayName": "Bank account",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "iban": {
+      "type": "string"
+    },
+    "currency": {
+      "type": "string"
+    },
+    "agent": {
+      "type": "string"
+    }
+  }
+}

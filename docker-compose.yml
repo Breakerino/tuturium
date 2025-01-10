@@ -1,0 +1,131 @@
+services:
+  app:
+    build: ./packages/app
+    container_name: ${PROJECT_NAME}_app_${PROJECT_ENV}
+    hostname: ${APP_SERVER_HOST}
+    environment:
+      - APP_SERVER_NAME=${APP_SERVER_NAME}
+      - APP_SERVER_PORT=${APP_SERVER_PORT}
+      - API_BASE_URL=${APP_API_BASE_URL}
+    volumes:
+      - ./packages/app:/app
+      - app-modules:/app/node_modules
+      - app-dist:/app/dist
+    networks:
+      - main
+
+  strapi:
+    container_name: ${PROJECT_NAME}_strapi_${PROJECT_ENV}
+    hostname: ${STRAPI_HOST}
+    restart: unless-stopped
+    build:
+      context: ./packages/api
+      dockerfile: Dockerfile
+      target: runner-${PROJECT_ENV}
+    environment:
+      # Database
+      - DATABASE_CLIENT=mysql
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      # Redis
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      # Meilisearch
+      - MEILISEARCH_HOST=${MEILISEARCH_HOST}
+      - MEILISEARCH_PORT=${MEILISEARCH_PORT}
+      - MEILISEARCH_API_KEY=${MEILISEARCH_API_KEY}
+      # Strapi
+      - PORT=${STRAPI_PORT}
+      - APP_KEYS=${STRAPI_APP_KEYS}
+      - JWT_SECRET=${STRAPI_ADMIN_JWT_SECRET}
+      - API_TOKEN_SALT=${STRAPI_API_TOKEN_SALT}
+      - ADMIN_JWT_SECRET=${STRAPI_ADMIN_JWT_SECRET}
+      # Server
+      - API_SERVER_NAME=${API_SERVER_NAME}
+      - ADMIN_SERVER_NAME=${ADMIN_SERVER_NAME}
+      - ADMIN_SERVER_PROTOCOL=${ADMIN_SERVER_PROTOCOL}
+      - API_SERVER_PROTOCOL=${API_SERVER_PROTOCOL}
+      # GoCardLess
+      - GOCARDLESS_SECRET_ID=${GOCARDLESS_SECRET_ID}
+      - GOCARDLESS_SECRET_KEY=${GOCARDLESS_SECRET_KEY}
+      # OpenAI
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    networks:
+      - main
+      - internal
+    volumes:
+      - ./packages/api:/srv/app
+      - ./packages/api/node_modules:/var/local/node_modules
+      - ~/var/local/${PROJECT_NAME}/strapi/${PROJECT_VERSION}:/var/local/strapi
+      - ~/var/local/${PROJECT_NAME}/public:/srv/app/public:rw
+      - strapi-modules:/srv/app/node_modules
+    depends_on:
+      - database
+      - redis
+
+  database:
+    image: mariadb:latest
+    container_name: ${PROJECT_NAME}_database_${PROJECT_ENV}
+    hostname: ${DATABASE_HOST}
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_USER: ${DATABASE_USERNAME}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_TCP_PORT: ${DATABASE_PORT}
+    networks:
+      - internal
+    volumes:
+      - strapi-database:/var/lib/mysql
+
+  redis:
+    image: redis:6.2-alpine
+    hostname: ${REDIS_HOST}
+    container_name: ${PROJECT_NAME}_redis_${PROJECT_ENV}
+    restart: unless-stopped
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+    networks:
+      - internal
+    volumes:
+      - strapi-redis:/data
+
+  meilisearch:
+    image: getmeili/meilisearch:v0.30.0
+    hostname: ${MEILISEARCH_HOST}
+    container_name: ${PROJECT_NAME}_meilisearch_${PROJECT_ENV}
+    restart: unless-stopped
+    networks:
+      - internal
+    environment:
+      - MEILI_NO_ANALYTICS=true
+      - MEILI_MASTER_KEY=${MEILISEARCH_API_KEY}
+      - MEILI_PORT=${MEILISEARCH_PORT}
+    volumes:
+      - strapi-meilisearch:/data.ms
+      
+networks:
+  main:
+    external: true
+    name: breakerino_main
+  internal:
+    driver: bridge
+
+volumes:
+  app-modules:
+    driver: local
+  app-dist:
+    driver: local
+  strapi-modules:
+    driver: local
+  strapi-redis:
+    driver: local
+  strapi-database:
+    driver: local
+  strapi-meilisearch:
+    driver: local

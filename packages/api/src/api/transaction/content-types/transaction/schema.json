@@ -1,0 +1,114 @@
+{
+  "kind": "collectionType",
+  "collectionName": "transactions",
+  "info": {
+    "singularName": "transaction",
+    "pluralName": "transactions",
+    "displayName": "Transactions",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "externalID": {
+      "type": "string"
+    },
+    "transactionID": {
+      "type": "string"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "pending",
+        "booked"
+      ]
+    },
+    "creditor": {
+      "type": "component",
+      "repeatable": false,
+      "component": "transaction.bank-account"
+    },
+    "debtor": {
+      "type": "component",
+      "repeatable": false,
+      "component": "transaction.bank-account"
+    },
+    "postingDate": {
+      "type": "datetime"
+    },
+    "valueDate": {
+      "type": "datetime"
+    },
+    "amount": {
+      "type": "decimal"
+    },
+    "currency": {
+      "type": "enumeration",
+      "enum": [
+        "EUR",
+        "USD"
+      ]
+    },
+    "currencyExchange": {
+      "type": "json"
+    },
+    "variableSymbol": {
+      "type": "string"
+    },
+    "constantSymbol": {
+      "type": "string"
+    },
+    "specificSymbol": {
+      "type": "string"
+    },
+    "additionalInformation": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "bankTransactionCode": {
+      "type": "string"
+    },
+    "merchantCategoryCode": {
+      "type": "string"
+    },
+    "wallet": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::wallet.wallet",
+      "inversedBy": "transactions"
+    },
+    "receipt": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::receipt.receipt",
+      "inversedBy": "transaction"
+    },
+    "category": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::transaction.transaction-category"
+    },
+    "labels": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::transaction.transaction-label"
+    },
+    "categorizedVia": {
+      "type": "enumeration",
+      "enum": [
+        "transfer",
+        "mcc",
+        "global-rule",
+        "user-rule",
+        "manual"
+      ]
+    },
+    "excludedFromReporting": {
+      "type": "boolean"
+    }
+  }
+}

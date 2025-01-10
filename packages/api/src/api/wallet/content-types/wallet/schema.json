@@ -1,0 +1,77 @@
+{
+  "kind": "collectionType",
+  "collectionName": "wallets",
+  "info": {
+    "singularName": "wallet",
+    "pluralName": "wallets",
+    "displayName": "Wallets",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "uid": {
+      "type": "customField",
+      "customField": "plugin::field-uuid.uuid"
+    },
+    "name": {
+      "type": "string"
+    },
+    "balance": {
+      "type": "decimal"
+    },
+    "currency": {
+      "type": "enumeration",
+      "enum": [
+        "EUR",
+        "USD"
+      ]
+    },
+    "iban": {
+      "type": "string"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "bank",
+        "cash",
+        "savings"
+      ]
+    },
+    "lastUpdateAt": {
+      "type": "datetime"
+    },
+    "bankRequisitionID": {
+      "type": "uid"
+    },
+    "bankAccountID": {
+      "type": "uid"
+    },
+    "bankAgreementID": {
+      "type": "uid"
+    },
+    "bankInstitutionID": {
+      "type": "string"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "wallets"
+    },
+    "transactions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::transaction.transaction",
+      "mappedBy": "wallet"
+    },
+    "balanceHistory": {
+      "displayName": "BalanceHistory",
+      "type": "component",
+      "repeatable": true,
+      "component": "wallet.balance-history"
+    }
+  }
+}

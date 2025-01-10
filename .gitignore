@@ -1,0 +1,38 @@
+# General
+.DS_Store
+node_modules
+
+# Dev
+.vscode
+**/.vscode
+.trash
+.tmp
+.dev
+
+# Logs
+lerna-debug.log
+yarn-error.log
+
+# Enviromental files
+.env
+.env.local
+.env.development
+.env.production
+**/*/.env.local
+**/*/.env.development
+**/*/.env.production
+
+# Vite
+dist
+tsconfig.tsbuildinfo
+**/vite.config.ts.timestamp-*
+
+# Docker
+docker-compose.local.yml
+
+# Nginx
+nginx/logs
+nginx/conf
+
+# Scripts
+makefile
