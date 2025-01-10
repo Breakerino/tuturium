@@ -1,0 +1,75 @@
+{
+  "kind": "collectionType",
+  "collectionName": "products",
+  "info": {
+    "singularName": "product",
+    "pluralName": "products",
+    "displayName": "Products",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "originName": {
+      "type": "string"
+    },
+    "categories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::product.product-category",
+      "inversedBy": "products"
+    },
+    "price": {
+      "type": "decimal"
+    },
+    "currency": {
+      "type": "enumeration",
+      "enum": [
+        "EUR"
+      ]
+    },
+    "vatRate": {
+      "type": "enumeration",
+      "enum": [
+        "standard",
+        "reduced",
+        "zero"
+      ]
+    },
+    "priceHistory": {
+      "displayName": "Price history",
+      "type": "component",
+      "repeatable": true,
+      "component": "product.price-history"
+    },
+    "unit": {
+      "type": "enumeration",
+      "enum": [
+        "kg",
+        "pc"
+      ]
+    },
+    "needsAiProcessing": {
+      "type": "boolean"
+    },
+    "aiProcessedAt": {
+      "type": "datetime"
+    },
+    "originStore": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::store.store",
+      "inversedBy": "products"
+    },
+    "alternativeNames": {
+      "displayName": "Alternative names",
+      "type": "component",
+      "repeatable": true,
+      "component": "product.alternative-names"
+    }
+  }
+}

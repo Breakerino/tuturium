@@ -1,0 +1,1 @@
+export const generateID = () => (new Date().getTime() + Math.random() * 100).toString(16);

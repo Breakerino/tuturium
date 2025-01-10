@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_receipt_taxes",
+  "info": {
+    "displayName": "Taxes",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "unique": false
+    },
+    "baseAmount": {
+      "type": "decimal"
+    },
+    "vatAmount": {
+      "type": "decimal"
+    },
+    "vatRate": {
+      "type": "decimal"
+    }
+  }
+}

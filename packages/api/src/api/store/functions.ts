@@ -1,0 +1,1 @@
+export const generateStoreDisplayName = (store: Record<string, any>) => `${store.name}${store.city && store.streetAddress ? ` - ${store.city} (${store.streetAddress})` : ''}`;

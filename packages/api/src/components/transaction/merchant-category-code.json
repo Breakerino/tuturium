@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_transaction_merchant_category_codes",
+  "info": {
+    "displayName": "Merchant Category Code"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "code": {
+      "type": "string"
+    }
+  }
+}

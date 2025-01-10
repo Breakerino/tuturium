@@ -1,0 +1,16 @@
+{
+	"name": "tuturium",
+	"version": "0.1.0",
+	"private": true,
+	"workspaces": {
+		"packages": [
+			"packages/*/*"
+		]
+	},
+	"devDependencies": {
+		"find-yarn-workspace-root": "^2.0.0",
+		"tsconfig-paths": "^4.2.0",
+		"typescript": "^5.2.2",
+		"plop": "^4.0.1"
+	}
+}

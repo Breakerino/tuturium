@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_product_alternative_names",
+  "info": {
+    "displayName": "Alternative names",
+    "icon": "archive"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    }
+  }
+}

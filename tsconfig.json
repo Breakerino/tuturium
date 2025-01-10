@@ -1,0 +1,14 @@
+{
+	"compileOnSave": false,
+	"compilerOptions": {
+		"baseUrl": ".",
+		"composite": true,
+		"resolveJsonModule": true,
+		"paths": {
+			"@tuturium/core/*": ["packages/core/*"],
+			"@tuturium/api/*": ["packages/api/src/*"],
+			"@tuturium/app/*": ["packages/app/src/*"],
+		}
+	},
+	"exclude": [".dev/*/**", ".trash/*/**"]
+}

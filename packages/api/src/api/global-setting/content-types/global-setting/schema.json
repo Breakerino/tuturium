@@ -1,0 +1,21 @@
+{
+  "kind": "singleType",
+  "collectionName": "global_settings",
+  "info": {
+    "singularName": "global-setting",
+    "pluralName": "global-settings",
+    "displayName": "Global settings",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "transactionCategorizationRules": {
+      "type": "component",
+      "repeatable": true,
+      "component": "transaction.categorization-rules"
+    }
+  }
+}

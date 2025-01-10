@@ -1,0 +1,42 @@
+{
+  "collectionName": "components_receipt_items",
+  "info": {
+    "displayName": "Item",
+    "icon": "archive"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "quantity": {
+      "type": "decimal"
+    },
+    "vatRate": {
+      "type": "enumeration",
+      "enum": [
+        "standard",
+        "reduced",
+        "zero"
+      ]
+    },
+    "price": {
+      "type": "decimal"
+    },
+    "unit": {
+      "type": "enumeration",
+      "enum": [
+        "kg",
+        "pc"
+      ]
+    },
+    "product": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product.product"
+    }
+  }
+}

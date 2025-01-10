@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_store_organizations",
+  "info": {
+    "displayName": "Organization"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "companyID": {
+      "type": "string"
+    },
+    "companyTaxID": {
+      "type": "string"
+    },
+    "companyVatID": {
+      "type": "string"
+    },
+    "isTaxPayer": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

@@ -1,0 +1,35 @@
+
+{
+  "kind": "collectionType",
+  "collectionName": "transaction_label",
+  "info": {
+    "singularName": "transaction-label",
+    "pluralName": "transaction-labels",
+    "displayName": "Transaction labels"
+  },
+  "options": {
+    "draftAndPublish": false,
+    "comment": ""
+  },
+	"attributes": {
+		"uid": {
+      "type": "customField",
+      "customField": "plugin::field-uuid.uuid"
+    },
+    "name": {
+      "type": "string"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "internal",
+        "custom"
+      ]
+    },
+		"user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_wallet_balance_histories",
+  "info": {
+    "displayName": "BalanceHistory",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "date": {
+      "type": "datetime"
+    },
+    "balance": {
+      "type": "decimal"
+    }
+  }
+}

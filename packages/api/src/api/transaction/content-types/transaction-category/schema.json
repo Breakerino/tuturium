@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "transaction_categories",
+  "info": {
+    "singularName": "transaction-category",
+    "pluralName": "transaction-categories",
+    "displayName": "Transaction categories",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "uid": {
+      "type": "customField",
+      "customField": "plugin::field-uuid.uuid"
+    },
+    "name": {
+      "type": "string"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "income",
+        "expense",
+        "transfer"
+      ]
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "merchantCategories": {
+      "displayName": "Merchant Category Code",
+      "type": "component",
+      "repeatable": true,
+      "component": "transaction.merchant-category-code"
+    },
+    "color": {
+      "type": "string"
+    }
+  }
+}

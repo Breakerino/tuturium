@@ -1,0 +1,191 @@
+# ------------------------------------------------------------
+# Name: @wooptima/chakra-ui-container-queries 
+# Author: Wooptima
+# Version: 1.0.1
+# Updated: 10/06/2024
+# ------------------------------------------------------------
+diff --git a/node_modules/@chakra-ui/styled-system/dist/index.d.ts b/node_modules/@chakra-ui/styled-system/dist/index.d.ts
+index da586a9..418fb1a 100644
+--- a/node_modules/@chakra-ui/styled-system/dist/index.d.ts
++++ b/node_modules/@chakra-ui/styled-system/dist/index.d.ts
+@@ -68,9 +68,18 @@ interface CustomThemeTypings {
+ }
+ type ThemeTypings = CustomThemeTypings extends BaseThemeTypings ? CustomThemeTypings : ThemeTypings$1;
+ 
++// src/utils/expand-container-queries.ts
++type CSSContainerQueryType = 'cq' | 'cqw' | 'cqh' | 'cqmw' | 'cqmh'; // currently supported: 'cq'
++type CSSContainerQueryValue = 'base'
++type CSSContainerQueryObject<T> = { [K in CSSContainerQueryValue]?: T } & { [k: string|number]: T }
++type CSSContainerQueryArray<T> = [string, CSSContainerQueryObject<T>];
++type CSSContainerQuery<T> = {
++  [K in CSSContainerQueryType]?: CSSContainerQueryObject<T> | CSSContainerQueryArray<T>;
++};
++
+ type ResponsiveArray<T> = Array<T | null>;
+ type ResponsiveObject<T> = Partial<Record<ThemeTypings["breakpoints"] | string, T>>;
+-type ResponsiveValue<T> = T | ResponsiveArray<T> | ResponsiveObject<T>;
++type ResponsiveValue<T> = T | ResponsiveArray<T> | ResponsiveObject<T> | CSSContainerQuery<T>;
+ type Length = string | 0 | number;
+ type Union<T> = T | (string & {});
+ type Token<CSSType, ThemeKey = unknown> = ThemeKey extends keyof ThemeTypings ? ResponsiveValue<CSSType | ThemeTypings[ThemeKey]> : ResponsiveValue<CSSType>;
+@@ -1682,6 +1691,23 @@ interface ScrollProps {
+     scrollPaddingY?: Token<CSS.Property.ScrollPadding | number, "space">;
+ }
+ 
++declare const containerQueries: Config$1;
++
++interface ContainerQueriesProps {
++		/**
++		 * The CSS `container` property
++		 */
++		container?: Token<`${CSS.Property.ContainerName} / ${CSS.Property.ContainerType}`> // Token<CSS.Property.Container>
++		/**
++		 * The CSS `container-name` property
++		 */
++		containerName?: Token<CSS.Property.ContainerName>;
++		/**
++		 * The CSS `container-type` property
++		 */
++		containerType?: Token<CSS.Property.ContainerType>;
++}
++
+ declare const pseudoSelectors: {
+     /**
+      * Styles for CSS selector `&:hover`
+@@ -1974,7 +2000,7 @@ declare const pseudoSelectors: {
+ type Pseudos = typeof pseudoSelectors;
+ declare const pseudoPropNames: ("_hover" | "_active" | "_focus" | "_highlighted" | "_focusWithin" | "_focusVisible" | "_disabled" | "_readOnly" | "_before" | "_after" | "_empty" | "_expanded" | "_checked" | "_grabbed" | "_pressed" | "_invalid" | "_valid" | "_loading" | "_selected" | "_hidden" | "_autofill" | "_even" | "_odd" | "_first" | "_firstLetter" | "_last" | "_notFirst" | "_notLast" | "_visited" | "_activeLink" | "_activeStep" | "_indeterminate" | "_groupHover" | "_peerHover" | "_groupFocus" | "_peerFocus" | "_groupFocusVisible" | "_peerFocusVisible" | "_groupActive" | "_peerActive" | "_groupDisabled" | "_peerDisabled" | "_groupInvalid" | "_peerInvalid" | "_groupChecked" | "_peerChecked" | "_groupFocusWithin" | "_peerFocusWithin" | "_peerPlaceholderShown" | "_placeholder" | "_placeholderShown" | "_fullScreen" | "_selection" | "_rtl" | "_ltr" | "_mediaDark" | "_mediaReduceMotion" | "_dark" | "_light" | "_horizontal" | "_vertical")[];
+ 
+-interface StyleProps extends SpaceProps, ColorProps, TransitionProps, TypographyProps, FlexboxProps, TransformProps, GridProps, FilterProps, LayoutProps, BorderProps, EffectProps, BackgroundProps, ListProps, PositionProps, RingProps, ScrollProps, InteractivityProps, TextDecorationProps, OtherProps {
++interface StyleProps extends SpaceProps, ColorProps, TransitionProps, TypographyProps, FlexboxProps, TransformProps, GridProps, FilterProps, LayoutProps, BorderProps, EffectProps, BackgroundProps, ListProps, PositionProps, RingProps, ScrollProps, InteractivityProps, TextDecorationProps, ContainerQueriesProps, OtherProps {
+ }
+ interface SystemCSSProperties extends CSS.Properties, Omit<StyleProps, keyof CSS.Properties> {
+ }
+@@ -2157,4 +2183,4 @@ declare function omitThemingProps<T extends ThemingProps>(props: T): Omit<T, "co
+ 
+ type OmitSpaceXY<T> = Omit<T, "spaceX" | "spaceY">;
+ 
+-export { BackgroundProps, BaseThemeTypings, BorderProps, CSSObject, CSSWithMultiValues, ColorProps, CustomThemeTypings, EffectProps, FilterProps, FlatToken, FlatTokens, FlattenTokensParam, FlexboxProps, FunctionCSSInterpolation, GridProps, InteractivityProps, LayoutProps, ListProps, MultiStyleConfig, OmitSpaceXY, Operand, OtherProps, PartsStyleFunction, PartsStyleInterpolation, PartsStyleObject, PlainToken, PositionProps, Pseudos, RecursiveCSSObject, RecursiveCSSSelector, RecursivePseudo, ResponsiveArray, ResponsiveObject, ResponsiveValue, RingProps, ScrollProps, SemanticToken, SemanticValue, SpaceProps, StyleConfig, StyleFunctionProps, StyleObjectOrFn, StyleProps, SystemCSSProperties, SystemProps, SystemStyleFunction, SystemStyleInterpolation, SystemStyleObject, TextDecorationProps, ThemeScale, ThemeThunk, ThemeTypings, ThemingProps, TransformProps, TransitionProps, TypographyProps, WithCSSVar, addPrefix, background, border, calc, color, createMultiStyleConfigHelpers, css, cssVar, defineCssVars, defineStyle, defineStyleConfig, effect, filter, flattenTokens, flexbox, getCSSVar, getCss, grid, interactivity, isStyleProp, layout, layoutPropNames, list, omitThemingProps, others, position, propNames, pseudoPropNames, pseudoSelectors, resolveStyleConfig, ring, scroll, space, systemProps, textDecoration, toCSSVar, toVarDefinition, toVarReference, tokenToCSSVar, transform, transition, typography };
++export { BackgroundProps, BaseThemeTypings, BorderProps, CSSObject, CSSWithMultiValues, ColorProps, CustomThemeTypings, EffectProps, FilterProps, FlatToken, FlatTokens, FlattenTokensParam, FlexboxProps, FunctionCSSInterpolation, GridProps, InteractivityProps, LayoutProps, ListProps, MultiStyleConfig, OmitSpaceXY, Operand, OtherProps, PartsStyleFunction, PartsStyleInterpolation, PartsStyleObject, PlainToken, PositionProps, Pseudos, RecursiveCSSObject, RecursiveCSSSelector, RecursivePseudo, ResponsiveArray, ResponsiveObject, ResponsiveValue, RingProps, ScrollProps, SemanticToken, SemanticValue, SpaceProps, StyleConfig, StyleFunctionProps, StyleObjectOrFn, StyleProps, SystemCSSProperties, SystemProps, SystemStyleFunction, SystemStyleInterpolation, SystemStyleObject, TextDecorationProps, ThemeScale, ThemeThunk, ThemeTypings, ThemingProps, TransformProps, TransitionProps, TypographyProps, WithCSSVar, addPrefix, background, border, calc, color, createMultiStyleConfigHelpers, css, cssVar, defineCssVars, defineStyle, defineStyleConfig, effect, filter, flattenTokens, flexbox, getCSSVar, getCss, grid, interactivity, isStyleProp, layout, layoutPropNames, list, omitThemingProps, others, position, propNames, pseudoPropNames, pseudoSelectors, resolveStyleConfig, ring, scroll, space, systemProps, textDecoration, toCSSVar, toVarDefinition, toVarReference, tokenToCSSVar, transform, transition, typography, containerQueries };
+diff --git a/node_modules/@chakra-ui/styled-system/dist/index.mjs b/node_modules/@chakra-ui/styled-system/dist/index.mjs
+index b43d1e6..f33e5a3 100644
+--- a/node_modules/@chakra-ui/styled-system/dist/index.mjs
++++ b/node_modules/@chakra-ui/styled-system/dist/index.mjs
+@@ -937,6 +937,13 @@ var scroll = {
+   scrollPaddingY: t.spaceT(["scrollPaddingTop", "scrollPaddingBottom"])
+ };
+ 
++// src/config/container-queries.ts
++var containerQueries = {
++  container: true,
++  containerName: true,
++	containerType: true
++};
++
+ // src/create-theme-vars/calc.ts
+ import { isObject as isObject2 } from "@chakra-ui/shared-utils";
+ function resolveReference(operand) {
+@@ -1699,7 +1706,8 @@ var systemProps = mergeWith2(
+   textDecoration,
+   transform,
+   list,
+-  transition
++  transition,
++	containerQueries
+ );
+ var layoutSystem = Object.assign({}, space, layout, flexbox, grid, position);
+ var layoutPropNames = Object.keys(
+@@ -1709,6 +1717,83 @@ var propNames = [...Object.keys(systemProps), ...pseudoPropNames];
+ var styleProps = { ...systemProps, ...pseudoSelectors };
+ var isStyleProp = (prop) => prop in styleProps;
+ 
++// src/utils/expand-container-queries.ts
++var validContainerQueryUnits = ['px', 'rem', 'em'];
++var containerQueryProp = 'cq'; // TODO: Add support for 'cqw' | 'cqh' | 'cqmw' | 'cqmh'
++
++var isValidContainerQueryValue = (value) => {
++  const parsedValue = analyzeCSSValue(value);
++  return !parsedValue.unitless && parsedValue.value !== '' && validContainerQueryUnits.includes(parsedValue.unit.toLowerCase());
++};
++
++var normalizeContainerQueryValue = (query) => {
++  if (query === 'base') {
++    query = 0;
++  }
++	
++  return transformFunctions.px(query);
++};
++
++var parseContainerQueries = (queries) => {
++  // TODO: Convert values to px, sort accordingly
++  const parsedQueries = Object.entries(queries)
++    .map(([query, value]) => [normalizeContainerQueryValue(query), value])
++    .sort();
++
++  return Object.fromEntries(parsedQueries);
++};
++
++var processContainerQueries = ({ property, name: containerName, queries }, computedStyles) => {
++  for (const [queryValue, propertyValue] of Object.entries(queries)) {
++    if (!isValidContainerQueryValue(queryValue)) {
++      throw new Error(`Unsupported query value "${queryValue}"`);
++    }
++		
++		const containerQueryKey = `@container ${containerName ? `${containerName} ` : ''}(min-width: ${queryValue})`;
++		
++		if ( ! (containerQueryKey in computedStyles) ) {
++			computedStyles[containerQueryKey] = { [property]: propertyValue };
++			continue;
++		}
++		
++    computedStyles[containerQueryKey] = { 
++			...computedStyles[containerQueryKey],
++			[property]: propertyValue 
++		};
++  }	
++};
++
++var expandContainerQueries = (property, styles, computedStyles) => {
++  if (!isObject(styles) || !(containerQueryProp in styles)) {
++    return styles;
++  }
++
++	let name = null;
++	let queries = {};
++	
++  try {
++    if (isObject(styles[containerQueryProp])) {
++      queries = styles[containerQueryProp];
++    } else if (Array.isArray(styles[containerQueryProp])) {
++      [name, queries] = styles[containerQueryProp];
++    } else {
++      throw new Error('Invalid format');
++    }		
++
++    if (!queries || !isObject(queries) || (name !== null && typeof name !== 'string')) {
++      throw new Error('Invalid type');
++    }
++
++    queries = parseContainerQueries(queries);
++    processContainerQueries({ property, name, queries }, computedStyles);
++
++    return omit(styles, [containerQueryProp]);
++  } catch (error) {
++    console.error('[container-queries]', error.message, {property, name, queries, styles});
++    return styles;
++  }
++};
++
+ // src/utils/expand-responsive.ts
+ import { isObject as isObject6, runIfFn } from "@chakra-ui/shared-utils";
+ var expandResponsive = (styles) => (theme) => {
+@@ -1720,6 +1805,9 @@ var expandResponsive = (styles) => (theme) => {
+     let value = runIfFn(styles[key], theme);
+     if (value == null)
+       continue;
++		
++		value = expandContainerQueries(key, value, computedStyles);
++		
+     value = isObject6(value) && isResponsive(value) ? toArrayValue(value) : value;
+     if (!Array.isArray(value)) {
+       computedStyles[key] = value;
