@@ -111,7 +111,7 @@ const SpendingReport: React.FC<SpendingReportProps> = ({ wallet, ...props }) => 
 			background: { fill: "transparent" },
 			legend: { enabled: false },
 			listeners: {
-				seriesNodeClick: (e) => {
+				seriesNodeDoubleClick: (e) => {
 					navigateToTransactionCategory(e.datum)
 				}
 			},
@@ -185,17 +185,17 @@ const SpendingReport: React.FC<SpendingReportProps> = ({ wallet, ...props }) => 
 	}
 
 	const navigateToTransactionCategory = (category: Record<string, any>) => {
-		const monthStart = moment(spendingDate, 'MM-YYYY').startOf('month');
-		const monthEnd = moment(spendingDate, 'MM-YYYY').endOf('month');
+		const monthStart = moment(spendingMonth, 'MM-YYYY').startOf('month');
+		const monthEnd = moment(spendingMonth, 'MM-YYYY').endOf('month');
 
 		const dateFrom = spendingWeek
-			? moment(spendingDate, 'MM-YYYY').startOf('month').add(spendingWeek - 1, 'weeks').startOf('week').isBefore(monthStart)
+			? moment(spendingMonth, 'MM-YYYY').startOf('month').add(spendingWeek - 1, 'weeks').startOf('week').isBefore(monthStart)
 				? monthStart
-				: moment(spendingDate, 'MM-YYYY').startOf('month').add(spendingWeek - 1, 'weeks').startOf('week')
+				: moment(spendingMonth, 'MM-YYYY').startOf('month').add(spendingWeek - 1, 'weeks').startOf('week')
 			: monthStart;
 
 		const dateTo = spendingWeek
-			? moment(spendingDate, 'MM-YYYY').startOf('month').add(spendingWeek - 1, 'weeks').endOf('week')
+			? moment(spendingMonth, 'MM-YYYY').startOf('month').add(spendingWeek - 1, 'weeks').endOf('week')
 			: monthEnd;
 
 		const url = new URL(`${window.location.origin}/transactions/category/${category.uid}`);
@@ -211,17 +211,17 @@ const SpendingReport: React.FC<SpendingReportProps> = ({ wallet, ...props }) => 
 	}
 
 	const navigateToProductCategory = (category: Record<string, any>) => {
-		const monthStart = moment(spendingDate, 'MM-YYYY').startOf('month');
-		const monthEnd = moment(spendingDate, 'MM-YYYY').endOf('month');
+		const monthStart = moment(spendingMonth, 'MM-YYYY').startOf('month');
+		const monthEnd = moment(spendingMonth, 'MM-YYYY').endOf('month');
 
 		const dateFrom = spendingWeek
-			? moment(spendingDate, 'MM-YYYY').startOf('month').add(spendingWeek - 1, 'weeks').startOf('week').isBefore(monthStart)
+			? moment(spendingMonth, 'MM-YYYY').startOf('month').add(spendingWeek - 1, 'weeks').startOf('week').isBefore(monthStart)
 				? monthStart
-				: moment(spendingDate, 'MM-YYYY').startOf('month').add(spendingWeek - 1, 'weeks').startOf('week')
+				: moment(spendingMonth, 'MM-YYYY').startOf('month').add(spendingWeek - 1, 'weeks').startOf('week')
 			: monthStart;
 
 		const dateTo = spendingWeek
-			? moment(spendingDate, 'MM-YYYY').startOf('month').add(spendingWeek - 1, 'weeks').endOf('week')
+			? moment(spendingMonth, 'MM-YYYY').startOf('month').add(spendingWeek - 1, 'weeks').endOf('week')
 			: monthEnd;
 
 		const url = new URL(`${window.location.origin}/products/category/${category.id}`);
@@ -247,7 +247,7 @@ const SpendingReport: React.FC<SpendingReportProps> = ({ wallet, ...props }) => 
 			overflowY="hidden"
 			{...props}
 		>
-			<Flex flexDirection="column" alignItems="center" justifyContent="center" p="3.6rem" gap="2rem" maxW="calc(100vw - (2 * var(--tuturium-space-mobile-spacing-content-x)) - 0.5rem)">
+			<Flex flexDirection="column" alignItems="center" justifyContent="center" p={{base: '2.4rem', md: '3.6rem'}} gap="2rem" maxW="calc(100vw - (2 * var(--tuturium-space-mobile-spacing-content-x)) - 0.5rem)">
 				{spendingReportQuery.isLoading || spendingReportQuery.isFetching ? (
 					<Flex gap="1rem" alignItems="center">
 						<Button variant="circle-icon" icon="general.chevron-left" isDisabled />
