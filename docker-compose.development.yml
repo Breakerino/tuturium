@@ -1,0 +1,43 @@
+services:
+  database:
+    image: mariadb:latest
+    container_name: ${PROJECT_NAME}_database_${PROJECT_ENV}
+    hostname: ${DATABASE_HOST}
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_USER: ${DATABASE_USERNAME}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_TCP_PORT: ${DATABASE_PORT}
+    networks:
+      - internal
+    volumes:
+      - strapi-database:/var/lib/mysql
+    ports:
+      - ${DATABASE_PORT}:${DATABASE_PORT}
+
+  redis:
+    image: redis:6.2-alpine
+    container_name: ${PROJECT_NAME}_redis_${PROJECT_ENV}
+    restart: unless-stopped
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+    networks:
+      - internal
+    volumes:
+      - strapi-redis:/data
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+      
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  strapi-database:
+    name: ${PROJECT_NAME}_strapi-database_${PROJECT_ENV}
+    driver: local
+  strapi-redis:
+    name: ${PROJECT_NAME}_strapi-redis_${PROJECT_ENV}
+    driver: local
