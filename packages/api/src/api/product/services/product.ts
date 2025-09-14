@@ -57,8 +57,15 @@ export default factories.createCoreService('api::product.product', ({ strapi }) 
 		};
 
 		console.debug('productNameNormalizerInput', JSON.stringify(productNameNormalizerInput, null, 2));
-
-		const localizedProducts = await strapi.service('api::ai.assistent').processJSON('multi_product_name_normalizer', productNameNormalizerInput);
+		
+		let localizedProducts = {};
+		
+		try {
+			localizedProducts = await strapi.service('api::ai.assistent').processJSON('multi_product_name_normalizer', productNameNormalizerInput);
+		} catch (e) {
+			strapi.log.error(e);
+			return result;
+		}
 
 		// 4. ---------
 
@@ -76,7 +83,14 @@ export default factories.createCoreService('api::product.product', ({ strapi }) 
 
 		console.debug('productsCategorizerInput', JSON.stringify(productsCategorizerInput, null, 2));
 
-		const categorizedProducts = await strapi.service('api::ai.assistent').processJSON('multi_product_categorizer', productsCategorizerInput);
+		let categorizedProducts = {};
+		
+		try {
+			categorizedProducts = await strapi.service('api::ai.assistent').processJSON('multi_product_categorizer', productsCategorizerInput);
+		} catch (e) {
+			strapi.log.error(e);
+			return result;
+		}
 
 		console.log(JSON.stringify({ productLocalizations: localizedProducts, categorizedProducts }, null, 2));
 
