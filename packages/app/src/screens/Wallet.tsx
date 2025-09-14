@@ -1,5 +1,5 @@
 //
-import { Flex, Heading, Spinner, Text, useDisclosure } from '@chakra-ui/react';
+import { Flex, Grid, Heading, Spinner, Text, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -97,7 +97,11 @@ const WalletScreen: React.FC = () => {
 	}
 
 	if (walletQuery.isLoading || isEmpty(wallet)) {
-		return <Spinner size="xl" colorScheme='purple' />
+		return (
+			<Grid placeItems="center" w="full" h="full" color="purple.200">
+				<Spinner size="xl" />
+			</Grid>
+		)
 	}
 
 	return (<>

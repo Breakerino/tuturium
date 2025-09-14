@@ -1,5 +1,5 @@
 //
-import { Flex, Heading, Spinner, Text } from '@chakra-ui/react';
+import { Flex, Grid, Heading, Spinner, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -83,10 +83,13 @@ const ProductCategory: React.FC = () => {
 
 		return productCategoryQuery.data?.products;
 	}, [productCategoryQuery.data]);
-
-
+	
 	if (productCategoryQuery.isLoading) {
-		return <Spinner size="xl" colorScheme='purple' />
+		return (
+			<Grid placeItems="center" w="full" h="full" color="purple.200">
+				<Spinner size="xl" />
+			</Grid>
+		)
 	}
 
 	const { category, total } = productCategoryQuery?.data as Record<string, any>;

@@ -1,6 +1,6 @@
 //
 import WalletItem from '@/components/WalletItem';
-import { Grid, GridProps, Spinner } from '@chakra-ui/react';
+import { Grid, GridItem, GridProps, Spinner } from '@chakra-ui/react';
 import React from 'react';
 
 //
@@ -22,19 +22,19 @@ const Wallets: React.FC<WalletsProps> = ({ ...props }) => {
 		queryKey: ['wallets'],
 		queryFn: async () => {
 			try {
-				const {status, data: {data}} = await api.getWallets();
-	 
+				const { status, data: { data } } = await api.getWallets();
+
 				if (status !== 200) {
 					return [];
 				}
-	
+
 				return data;
 			} catch (e) {
 				if (e instanceof AxiosError && e.response?.status === 401) { }
 				console.error(e);
 			}
 			return []
-		}, 
+		},
 		staleTime: 30000
 	})
 
@@ -57,7 +57,23 @@ const Wallets: React.FC<WalletsProps> = ({ ...props }) => {
 	}
 
 	if (walletsQuery.isLoading || ! isArray(walletsQuery.data)) {
-		return <Spinner />
+		return (
+			<Grid {...props} h="14.2rem">
+				{Array.from({ length: 3 }).map((_, index) => (
+					<GridItem
+						as={Grid}
+						key={index}
+						placeItems="center"
+						background="purple.900" color="purple.200"
+						borderWidth="0.1rem" borderColor="purple.800" borderStyle="solid" borderRadius="md"
+						px={{ base: '2.2rem', md: '2.8rem' }}
+						py={{ base: '1.8rem', md: '2.2rem' }}
+					>
+						<Spinner size="md" />
+					</GridItem>
+				))}
+			</Grid>
+		)
 	}
 
 	return (

@@ -1,5 +1,5 @@
 //
-import { Flex, Heading, Spinner, Text } from '@chakra-ui/react';
+import { Flex, Grid, Heading, Spinner, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -73,17 +73,16 @@ const TransactionCategory: React.FC = () => {
 		return parsedTransactions;
 	}, [transactionCategoryQuery?.data?.transactions]);
 
-	console.log({ transactions });
-
-
 	const total = transactionCategoryQuery?.data?.total;
-
 	const category = transactionCategoryQuery?.data?.category;
-
 	const wallet = transactionCategoryQuery?.data?.wallet;
 
 	if (transactionCategoryQuery.isLoading) {
-		return <Spinner size="xl" colorScheme='purple' />
+		return (
+			<Grid placeItems="center" w="full" h="full" color="purple.200">
+				<Spinner size="xl" />
+			</Grid>
+		)
 	}
 
 	return (<>

@@ -1,5 +1,5 @@
 //
-import { Flex, Heading, Spinner, Text } from '@chakra-ui/react';
+import { Flex, Grid, Heading, Spinner, Text } from '@chakra-ui/react';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -41,9 +41,13 @@ const Transaction: React.FC = () => {
 		},
 		staleTime: 30000
 	})
-
+	
 	if (transactionQuery.isLoading || isNil(transactionQuery.data)) {
-		return <Spinner size="xl" colorScheme='purple' />
+		return (
+			<Grid placeItems="center" w="full" h="full" color="purple.200">
+				<Spinner size="xl" />
+			</Grid>
+		)
 	}
 
 	return (

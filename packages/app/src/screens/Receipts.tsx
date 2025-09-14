@@ -1,5 +1,5 @@
 //
-import { Flex, Heading, Text } from '@chakra-ui/react';
+import { Flex, Grid, Heading, Spinner, Text } from '@chakra-ui/react';
 import React from 'react';
 
 //
@@ -57,6 +57,15 @@ const Receipts: React.FC = () => {
 		return parsedReceipts;
 	}, [receiptsQuery.data]);
 
+	
+	if (receiptsQuery.isLoading) {
+		return (
+			<Grid placeItems="center" w="full" h="full" color="purple.200">
+				<Spinner size="xl" />
+			</Grid>
+		)
+	}
+	
 	return (
 		<Flex flexDirection="column" w="full">
 			<Heading as="h1" fontSize="3.2rem" color="purple.200" fontWeight={500} m={0}>Receipts</Heading>
