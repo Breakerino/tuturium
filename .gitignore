@@ -29,10 +29,3 @@ tsconfig.tsbuildinfo
 
 # Docker
 docker-compose.local.yml
-
-# Nginx
-nginx/logs
-nginx/conf
-
-# Scripts
-makefile
