@@ -1885,7 +1885,7 @@
     semver "7.5.4"
     umzug "3.2.1"
 
-"@strapi/design-system@1.19.0", "@strapi/design-system@^1.18.0":
+"@strapi/design-system@1.19.0":
   version "1.19.0"
   resolved "https://registry.yarnpkg.com/@strapi/design-system/-/design-system-1.19.0.tgz#1b0ca923c22f167baa6d35663e7f47c971df474c"
   integrity sha512-kEQNaRztIcr6I5Zh6mxtE/Nmkk1mylCS5s56ySKDdqOjWZw2BCbS72/J9k6r1RF1TLIDSXJN9r5dHR0ZKtWvBQ==
@@ -1968,7 +1968,7 @@
     react-query "3.39.3"
     react-select "5.7.0"
 
-"@strapi/icons@1.19.0", "@strapi/icons@^1.18.0":
+"@strapi/icons@1.19.0":
   version "1.19.0"
   resolved "https://registry.yarnpkg.com/@strapi/icons/-/icons-1.19.0.tgz#efa6b553a7de437171512e3549859faa141a145f"
   integrity sha512-jcS7n3Ps+73fYGadxdaD6owazoDJKN1fHSG9dp8RX4RqkP6BfoHOX5j3aodVLmDX57Ksg6gy5JXf9xEml7nMpQ==
@@ -2336,7 +2336,7 @@
     aria-hidden "^1.2.4"
     react-remove-scroll "^2.5.9"
 
-"@strapi/utils@4.25.2", "@strapi/utils@^4.24.0":
+"@strapi/utils@4.25.2":
   version "4.25.2"
   resolved "https://registry.yarnpkg.com/@strapi/utils/-/utils-4.25.2.tgz#eb16720804d05c0e8d445b8c6b54876e4aa3adeb"
   integrity sha512-r9ANvotnAkd1d9XToZJ+qp52bBu9wcj60mU6Yzo8S2aOvJYXZ7khkCfGmtA8sX/lcPFb7RIEb5rnFqiuNxZ/sA==
@@ -4230,13 +4230,6 @@ cross-env@^7.0.3:
   integrity sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==
   dependencies:
     cross-spawn "^7.0.1"
-
-cross-fetch@^3.1.6:
-  version "3.1.8"
-  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.8.tgz#0327eba65fd68a7d119f8fb2bf9334a1a7956f82"
-  integrity sha512-cvA+JwZoU0Xq+h6WkMvAUqPEYy92Obet6UdKLfW60qn99ftItKjB5T+BkyWOFWe2pUyfQ+IJHmpOTznqk1M6Kg==
-  dependencies:
-    node-fetch "^2.6.12"
 
 cross-spawn@^7.0.1, cross-spawn@^7.0.3:
   version "7.0.3"
@@ -7331,20 +7324,6 @@ media-typer@0.3.0:
   resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
   integrity sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==
 
-meilisearch@^0.38.0:
-  version "0.38.0"
-  resolved "https://registry.yarnpkg.com/meilisearch/-/meilisearch-0.38.0.tgz#c3f666a995f15553b1b27e05e28a51bbfb3639bc"
-  integrity sha512-bHaq8nYxSKw9/Qslq1Zes5g9tHgFkxy/I9o8942wv2PqlNOT0CzptIkh/x98N52GikoSZOXSQkgt6oMjtf5uZw==
-  dependencies:
-    cross-fetch "^3.1.6"
-
-meilisearch@^0.41.0:
-  version "0.41.0"
-  resolved "https://registry.yarnpkg.com/meilisearch/-/meilisearch-0.41.0.tgz#98fc50dd8ce4f2446aa4445e3cecd47e3c9afde5"
-  integrity sha512-5KcGLxEXD7E+uNO7R68rCbGSHgCqeM3Q3RFFLSsN7ZrIgr8HPDXVAIlP4LHggAZfk0FkSzo8VSXifHCwa2k80g==
-  dependencies:
-    cross-fetch "^3.1.6"
-
 memfs@^3.4.1, memfs@^3.4.12:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/memfs/-/memfs-3.6.0.tgz#d7a2110f86f79dd950a8b6df6d57bc984aa185f6"
@@ -7717,7 +7696,7 @@ node-fetch@2.6.9:
   dependencies:
     whatwg-url "^5.0.0"
 
-node-fetch@2.7.0, node-fetch@^2.6.12, node-fetch@^2.6.7:
+node-fetch@2.7.0, node-fetch@^2.6.7:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.7.0.tgz#d0f0fa6e3e2dc1d27efcd8ad99d550bda94d187d"
   integrity sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==
@@ -9863,16 +9842,6 @@ strapi-plugin-import-export-entries@^1.23.1:
     monaco-editor-webpack-plugin "7.0.1"
     node-fetch "2.6.9"
     react-singleton-hook "3.3.0"
-
-strapi-plugin-meilisearch@^0.12.0:
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/strapi-plugin-meilisearch/-/strapi-plugin-meilisearch-0.12.0.tgz#5ec86a9d66ac1418bff399bfec7f4d2f4d07fde9"
-  integrity sha512-86VFljXhfwtQL8AvBXpvM/IMVgRDPWXZCh3Eg6G/ybSxlbcbODi7/R9XrXoSkC/sSQqscPtradY3XYoTE4QbKg==
-  dependencies:
-    "@strapi/design-system" "^1.18.0"
-    "@strapi/icons" "^1.18.0"
-    "@strapi/utils" "^4.24.0"
-    meilisearch "^0.38.0"
 
 strapi-plugin-redis@^1.1.0:
   version "1.1.0"

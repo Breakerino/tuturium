@@ -44,42 +44,5 @@ export default ({ env }) => ({
 				removeDataKey: true,
 			},
 		},
-	},
-	meilisearch: {
-		config: {
-			// General
-			host: `${env('MEILISEARCH_HOST', 'localhost')}:${env('MEILISEARCH_PORT', '7700')}`,
-			apiKey: env('MEILISEARCH_API_KEY', ''),
-			
-			// Collection types
-			product: {
-				// filterEntry: ({ entry }) => {
-				// 	return entry.enabled === true;
-				// },
-				// entriesQuery: {
-				// 	limit: 1000,
-				// },
-			// import Meilisearch, { Index } from 'meilisearch';
-
-			// const meilisearchConfig = strapi.config.get('plugin.meilisearch');
-
-			// const meilisearch = new Meilisearch({
-			// 	host: `http://${meilisearchConfig?.host}`,
-			// 	apiKey: meilisearchConfig?.apiKey,
-			// });
-
-			// const productsIndex = meilisearch.index('product');
-
-			// const response = await productsIndex.search(searchQuery, {
-			// 	limit: 20,
-			// });
-
-			// productsIndex.searchSimilarDocuments({ id: 'TARGET_DOCUMENT_ID'})
-				settings: {
-					searchableAttributes: ['name', 'originName'],
-				},
-				transformEntry: ({ entry }) => _.pick(entry, ['id', 'name', 'originName'])
-			},
-		},
 	}
 });

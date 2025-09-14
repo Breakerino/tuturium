@@ -95,20 +95,6 @@ services:
     volumes:
       - strapi-redis:/data
 
-  meilisearch:
-    image: getmeili/meilisearch:v0.30.0
-    hostname: ${MEILISEARCH_HOST}
-    container_name: ${PROJECT_NAME}_meilisearch_${PROJECT_ENV}
-    restart: unless-stopped
-    networks:
-      - internal
-    environment:
-      - MEILI_NO_ANALYTICS=true
-      - MEILI_MASTER_KEY=${MEILISEARCH_API_KEY}
-      - MEILI_PORT=${MEILISEARCH_PORT}
-    volumes:
-      - strapi-meilisearch:/data.ms
-      
 networks:
   main:
     external: true
@@ -126,6 +112,4 @@ volumes:
   strapi-redis:
     driver: local
   strapi-database:
-    driver: local
-  strapi-meilisearch:
     driver: local
