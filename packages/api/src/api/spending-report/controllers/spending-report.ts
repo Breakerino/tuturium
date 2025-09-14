@@ -1,6 +1,6 @@
 //
 import { factories } from '@strapi/strapi';
-import _, { has } from 'lodash';
+import _ from 'lodash';
 
 //
 import moment from 'moment';
@@ -26,8 +26,8 @@ export default factories.createCoreController('api::receipt.receipt', ({ strapi 
 				throw new ResponseError('User is not authorized.', 401);
 			}
 
-			const dateFrom = _.has(query, 'from') ? moment(query.from) : moment().startOf('month');
-			const dateTo = _.has(query, 'from') ? moment(query.to) : moment().endOf('month');
+			let dateFrom = _.has(query, 'from') ? moment(query.from) : null;
+			let dateTo = _.has(query, 'from') ? moment(query.to) : null;
 
 			const wallet = _.has(query, 'wallet')
 				? await strapi.db.query('api::wallet.wallet').findOne({
@@ -39,145 +39,40 @@ export default factories.createCoreController('api::receipt.receipt', ({ strapi 
 			if (_.has(query, 'wallet') && !wallet) {
 				throw new ResponseError('Invalid wallet', HTTPStatusCode.BAD_REQUEST);
 			}
-
-			let transactions: Record<string, any>[] = await strapi.entityService.findMany('api::transaction.transaction', {
-				filters: {
-					...(
-						(! wallet || wallet.type !== 'savings') ? {
-							category: {
-								type: {
-									$not: 'transfer'
-								}
-							},
-						} : {}
-					),
-					wallet: {
-						user: user.id,
-						...(wallet ? { uid: wallet.uid } : {})
-					},
-					// TODO: When has receipt, use issuedAt, otherwise postingDate (post-process?)
-					valueDate: { // UPDATED @15/09/24
-						$between: [
-							dateFrom.format('YYYY-MM-DD'),
-							dateTo.format('YYYY-MM-DD')
-						]
-					},
-					$or: [
-						{ excludedFromReporting: { $null: true } },
-						{ excludedFromReporting: false },
-					]
-				},
-				sort: { valueDate: 'desc', transactionID: 'desc' },
-				populate: {
-					category: true,
-					receipt: { populate: { items: { populate: { product: { populate: { categories: true } } } } } },
-					creditor: true,
-					debtor: true,
-					labels: true,
-					wallet: true
-				}
-			})
 			
-			let totals = { income: 0, expense: 0 }
-			let categories = { income: {}, expense: {}, products: {} };
-
-			for (const transaction of transactions) {
-				// Skip if transaction has no category (TEMP?)
-				if (!_.isNumber(transaction?.category?.id)) {
-					continue;
-				}
-
-				const transactionType = transaction.amount > 0 ? 'income' : 'expense';
+			let spendingReport = null;
+			
+			if ( ! dateFrom && ! dateTo ) {
+				dateFrom = moment().startOf('month');
+				dateTo = moment().endOf('month');
 				
-				// Add transaction amount to totals
-				totals[transactionType] += Math.abs(transaction.amount);
-				totals[transactionType] = Number(totals[transactionType].toFixed(2))
-
-				// Include category to the categories object if not exists
-				if (!_.has(categories, `${transactionType}.${transaction.category.id}`)) {
-					_.set(categories, `${transactionType}.${transaction.category.id}`, {
-						uid: transaction.category.uid,
-						name: transaction.category.name,
-						total: 0,
-						transactions: 0,
-						breakdown: {}
+				for (let monthsBack = 0; monthsBack < 12; monthsBack++) {
+					spendingReport = await strapi.service('api::spending-report.spending-report').getSpendingReport({
+						user, 
+						wallet,
+						dateFrom, 
+						dateTo
 					});
-				}
-
-				// Add transaction amount to category total
-				categories[transactionType][transaction.category.id].total += transaction.amount;
-				categories[transactionType][transaction.category.id].total = Number(categories[transactionType][transaction.category.id].total.toFixed(2))
-
-				categories[transactionType][transaction.category.id].transactions += 1;
-
-				// Skip if transaction has not receipt
-				if (_.isEmpty(transaction?.receipt)) {
-					continue;
-				}
-
-				for (const receiptItem of transaction.receipt.items) {
-					// Skip if receipt item has no product
-					if (!_.has(receiptItem, 'product.categories[0].id')) {
-						continue;
+					
+					if ( ! _.isEmpty(spendingReport.transactions) ) {
+						break;
 					}
-
-					// Include product category to the transaction breakdown object if not exists
-					if (!_.has(categories, `${transactionType}.${transaction.category.id}.breakdown.${receiptItem.product.categories[0].id}`)) {
-						_.set(categories, `${transactionType}.${transaction.category.id}.breakdown.${receiptItem.product.categories[0].id}`, {
-							id: receiptItem.product.categories[0].id,
-							name: receiptItem.product.categories[0].name,
-							total: 0,
-						});
-					}
-
-					//
-					if (!_.has(categories, `products.${receiptItem.product.categories[0].id}`)) {
-						_.set(categories, `products.${receiptItem.product.categories[0].id}`, {
-							id: receiptItem.product.categories[0].id,
-							name: receiptItem.product.categories[0].name,
-							total: 0,
-							receipts: 0
-						});
-					}
-
-					// Add receipt item total price to transaction breakdown total
-					categories[transactionType][transaction.category.id].breakdown[receiptItem.product.categories[0].id].total += receiptItem.price;
-					categories[transactionType][transaction.category.id].breakdown[receiptItem.product.categories[0].id].total = Number(categories[transactionType][transaction.category.id].breakdown[receiptItem.product.categories[0].id].total.toFixed(2))
-
-					//
-					categories.products[receiptItem.product.categories[0].id].total += receiptItem.price;
-					categories.products[receiptItem.product.categories[0].id].total = Number(categories.products[receiptItem.product.categories[0].id].total.toFixed(2));
-					categories.products[receiptItem.product.categories[0].id].receipts += 1;
+					
+					dateFrom = dateFrom.subtract(1, 'month');
+					dateTo = dateTo.subtract(1, 'month');
 				}
-
-				// TODO: Product categories breakdown
-
-				//
-				//categories[transactionType][transaction.category.id].transactions.push(transaction.id);
+			} else {
+				spendingReport = await strapi.service('api::spending-report.spending-report').getSpendingReport({
+					user, 
+					wallet,
+					dateFrom, 
+					dateTo
+				});
 			}
-
-			//
-			categories.income = Object.values(categories.income).sort((a: any, b: any) => a.total > b.total ? -1 : 1)
-			categories.expense = Object.values(categories.expense).sort((a: any, b: any) => a.total > b.total ? 1 : -1)
-			categories.products = Object.values(categories.products).sort((a: any, b: any) => a.total > b.total ? -1 : 1)
-
-			transactions = transactions.map((transaction) => {
-				transaction.creditor = _.pick(transaction.creditor, ['name', 'iban', 'currency', 'agent']);
-				transaction.debtor = _.pick(transaction.debtor, ['name', 'iban', 'currency', 'agent']);
-				transaction.category = _.pick(transaction.category, ['uid', 'name', 'type']);
-				transaction.labels = transaction.labels.map((label) => {
-					return _.pick(label, ['uid', 'name']);
-				})
-				transaction.wallet = transaction.wallet.uid;
-
-				return transaction;
-			})
 
 			response.setData({
 				date: { from: dateFrom, to: dateTo },
-				totals,
-				categories,
-				transactions
+				...spendingReport
 			})
 		} catch (error) {
 			response.setError(error);
@@ -397,7 +292,7 @@ export default factories.createCoreController('api::receipt.receipt', ({ strapi 
 					total.price += item.price;
 					total.quantity += item.quantity;
 
-					if (has(products, item.product.id)) {
+					if (_.has(products, item.product.id)) {
 						products[item.product.id].quantity += item.quantity;
 						products[item.product.id].total += item.price;
 						continue;
